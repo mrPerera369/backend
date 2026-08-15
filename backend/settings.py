@@ -117,11 +117,16 @@ USE_TZ = True
 
 
 # ---- Static files (CSS, JS, admin panel styling) ----
-# NOTE: STATICFILES_STORAGE (old-style) eka mehema thiyenna epa —
-# STORAGES dict eka witharai use karanna one, dekama thiyenoth conflict wenawa.
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = []   # explicit, empty widiyata dila - app static folders witharak AppDirectoriesFinder eken auto-discover wenawa
+STATICFILES_DIRS = []
+
+# NOTE: django-cloudinary-storage package eke collectstatic override eka
+# STATICFILES_STORAGE (old-style setting) eka directly access karanawa,
+# STORAGES dict eka support karanne naha (0.3.0 version eke). Ehema nisa
+# dekama one - STORAGES dict eka Django ekatai, STATICFILES_STORAGE
+# eka cloudinary_storage package ekatai.
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # ---- Media files (uploaded project images) ----
