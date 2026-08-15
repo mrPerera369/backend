@@ -7,7 +7,6 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -15,7 +14,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-# Production ekedi ownage actual domain ekath add karanna one
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
     default="localhost,127.0.0.1",
@@ -59,7 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # static files (admin CSS) serve karanna
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,7 +69,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
-# ---- CORS: production frontend domain(s) add karanna ----
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
     default="http://localhost:3000,http://127.0.0.1:3000",
@@ -97,8 +94,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # ---- Database ----
-# Production: DATABASE_URL (Railway PostgreSQL) eken auto-configure wenawa.
-# Local dev ekedi DATABASE_URL set karala nathnam SQLite fallback ekak use wenawa.
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -107,7 +102,6 @@ DATABASES = {
 }
 
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -116,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -124,15 +117,14 @@ USE_TZ = True
 
 
 # ---- Static files (CSS, JS, admin panel styling) ----
+# NOTE: STATICFILES_STORAGE (old-style) eka mehema thiyenna epa —
+# STORAGES dict eka witharai use karanna one, dekama thiyenoth conflict wenawa.
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = []   # explicit, empty widiyata dila - app static folders witharak AppDirectoriesFinder eken auto-discover wenawa
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 # ---- Media files (uploaded project images) ----
-# Cloudinary use karanawa production ekedi (Railway wage services wala
-# local storage persistent naha - redeploy karama images delete wenawa).
-# Cloudinary credentials .env ekedi nathnam, local storage ekatama fallback wenawa (local dev ekata).
 CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
 
 if CLOUDINARY_CLOUD_NAME:
@@ -146,20 +138,22 @@ if CLOUDINARY_CLOUD_NAME:
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
         "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
 
 
-# Security headers - production ekedi HTTPS use karanawa nam
 if not DEBUG:
     SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
     SESSION_COOKIE_SECURE = True
@@ -170,7 +164,6 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# ---- Logging for Railway ----
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
