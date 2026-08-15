@@ -126,13 +126,7 @@ STATICFILES_DIRS = []
 # STORAGES dict eka support karanne naha (0.3.0 version eke). Ehema nisa
 # dekama one - STORAGES dict eka Django ekatai, STATICFILES_STORAGE
 # eka cloudinary_storage package ekatai.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# whitenoise strict mode eken sample CSS files walata reference wena
-# sub-assets (icons wage) missing unoth build ekama fail karanawa.
-# Meka disable karanawa - files ekakma load wenna baruna nam plain
-# unstyled widiyata pennanawa, ehema una site eka break wenne naha.
-WHITENOISE_MANIFEST_STRICT = False
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
 # ---- Media files (uploaded project images) ----
@@ -149,7 +143,7 @@ if CLOUDINARY_CLOUD_NAME:
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
 else:
@@ -160,7 +154,7 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
 
