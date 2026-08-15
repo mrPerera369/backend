@@ -126,7 +126,7 @@ STATICFILES_DIRS = []
 # STORAGES dict eka support karanne naha (0.3.0 version eke). Ehema nisa
 # dekama one - STORAGES dict eka Django ekatai, STATICFILES_STORAGE
 # eka cloudinary_storage package ekatai.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 
 # ---- Media files (uploaded project images) ----
@@ -143,7 +143,7 @@ if CLOUDINARY_CLOUD_NAME:
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
 else:
@@ -154,7 +154,7 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
 
