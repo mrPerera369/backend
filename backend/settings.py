@@ -1,4 +1,4 @@
-"""
+﻿"""
 Django settings for backend project.
 """
 
@@ -190,3 +190,4 @@ LOGGING = {
         },
     },
 }
+
