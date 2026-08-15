@@ -128,6 +128,12 @@ STATICFILES_DIRS = []
 # eka cloudinary_storage package ekatai.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# whitenoise strict mode eken sample CSS files walata reference wena
+# sub-assets (icons wage) missing unoth build ekama fail karanawa.
+# Meka disable karanawa - files ekakma load wenna baruna nam plain
+# unstyled widiyata pennanawa, ehema una site eka break wenne naha.
+WHITENOISE_MANIFEST_STRICT = False
+
 
 # ---- Media files (uploaded project images) ----
 CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
