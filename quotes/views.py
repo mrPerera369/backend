@@ -1,7 +1,7 @@
 import os
 import threading
+import requests
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,12 +21,39 @@ from .serializers import QuoteRequestSerializer
 #     return request.META.get("REMOTE_ADDR")
 
 
+RESEND_API_URL = "https://api.resend.com/emails"
+
+
+def _send_via_resend(*, to, subject, html, text):
+    """
+    Sends one email via the Resend HTTP API (over HTTPS/443), which
+    avoids the outbound-SMTP blocking/timeouts some hosts (e.g. Railway)
+    impose on port 587/465. Raises on failure so the caller's except
+    block can log it.
+    """
+    resp = requests.post(
+        RESEND_API_URL,
+        headers={
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": [to],
+            "subject": subject,
+            "html": html,
+            "text": text,
+        },
+        timeout=15,
+    )
+    resp.raise_for_status()
+
+
 def _send_quote_emails(quote_id):
     """
     Runs on a background thread so the HTTP request doesn't block on
-    SMTP (which can be slow/blocked on some hosts). Re-fetches the
-    quote by id since this runs outside the request/DB-connection
-    context that started it.
+    email sending. Re-fetches the quote by id since this runs outside
+    the request/DB-connection context that started it.
     """
     from .models import QuoteRequest
 
@@ -35,7 +62,6 @@ def _send_quote_emails(quote_id):
     except QuoteRequest.DoesNotExist:
         return
 
-    subject = f"New Quote Request — {quote.service}"
     body = (
         f"New quote request received from the website:\n\n"
         f"Name: {quote.name}\n"
@@ -64,17 +90,14 @@ def _send_quote_emails(quote_id):
             </div>
         </div>
         """
-        admin_email = EmailMultiAlternatives(
-            subject=subject,
-            body=body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[settings.QUOTE_NOTIFY_EMAIL],
+        _send_via_resend(
+            to=settings.QUOTE_NOTIFY_EMAIL,
+            subject=f"New Quote Request — {quote.service}",
+            html=admin_html,
+            text=body,
         )
-        admin_email.attach_alternative(admin_html, "text/html")
-        admin_email.send(fail_silently=False)
 
         # ---- Email 2: Auto-reply to the client ----
-        client_subject = "Thank you for reaching out to Lithavi International"
         client_text = (
             f"Hi {quote.name},\n\n"
             f"Thank you for your interest in our services. We've received "
@@ -98,14 +121,12 @@ def _send_quote_emails(quote_id):
             </div>
         </div>
         """
-        client_email = EmailMultiAlternatives(
-            subject=client_subject,
-            body=client_text,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[quote.email],
+        _send_via_resend(
+            to=quote.email,
+            subject="Thank you for reaching out to Lithavi International",
+            html=client_html,
+            text=client_text,
         )
-        client_email.attach_alternative(client_html, "text/html")
-        client_email.send(fail_silently=False)
 
         quote.email_sent = True
         quote.save(update_fields=["email_sent"])

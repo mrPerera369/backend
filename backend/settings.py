@@ -21,17 +21,24 @@ ALLOWED_HOSTS = config(
 )
 
 
-# ---- Email (Porkbun Email Hosting) ----
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.porkbun.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 30   
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+# ---- Email (Resend HTTP API) ----
+# Switched from Porkbun SMTP because Railway (and many container hosts)
+# block/throttle outbound SMTP ports (587/465), causing "timed out"
+# errors in production even though it worked fine locally. Resend sends
+# over HTTPS instead, so it isn't affected by that restriction.
+RESEND_API_KEY = config("RESEND_API_KEY")
 
 DEFAULT_FROM_EMAIL = "info@lithavi.com"
 QUOTE_NOTIFY_EMAIL = "info@lithavi.com"
+
+# ---- Old SMTP config (Porkbun) — no longer used, kept for reference ----
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.porkbun.com"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_TIMEOUT = 30
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
 # Application definition
@@ -193,4 +200,3 @@ LOGGING = {
         },
     },
 }
-
