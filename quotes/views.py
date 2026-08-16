@@ -1,21 +1,24 @@
 import os
 import threading
 from django.conf import settings
-from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import QuoteRequestSerializer
 
-RATE_LIMIT_SECONDS = 15 * 60  # 15 minutes
+# --- Rate limiting (currently disabled) ---
+# from django.core.cache import cache
 
 
-def _get_client_ip(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        return x_forwarded_for.split(",")[0].strip()
-    return request.META.get("REMOTE_ADDR")
+# RATE_LIMIT_SECONDS = 15 * 60  # 15 minutes
+#
+#
+# def _get_client_ip(request):
+#     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+#     if x_forwarded_for:
+#         return x_forwarded_for.split(",")[0].strip()
+#     return request.META.get("REMOTE_ADDR")
 
 
 def _send_quote_emails(quote_id):
@@ -112,23 +115,24 @@ def _send_quote_emails(quote_id):
 
 class QuoteRequestCreateView(APIView):
     def post(self, request):
-        client_ip = _get_client_ip(request)
-        cache_key = f"quote_rate_limit_{client_ip}"
-
-        if cache.get(cache_key):
-            return Response(
-                {
-                    "detail": "You've already submitted a request recently. "
-                    "Please wait 15 minutes before submitting again."
-                },
-                status=status.HTTP_429_TOO_MANY_REQUESTS,
-            )
+        # --- Rate limiting (currently disabled) ---
+        # client_ip = _get_client_ip(request)
+        # cache_key = f"quote_rate_limit_{client_ip}"
+        #
+        # if cache.get(cache_key):
+        #     return Response(
+        #         {
+        #             "detail": "You've already submitted a request recently. "
+        #             "Please wait 15 minutes before submitting again."
+        #         },
+        #         status=status.HTTP_429_TOO_MANY_REQUESTS,
+        #     )
 
         serializer = QuoteRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         quote = serializer.save()
 
-        cache.set(cache_key, True, RATE_LIMIT_SECONDS)
+        # cache.set(cache_key, True, RATE_LIMIT_SECONDS)
 
         # Send both emails on a background thread so this request doesn't
         # block on SMTP (which can be slow or blocked outbound on some
