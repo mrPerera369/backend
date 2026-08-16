@@ -28,7 +28,7 @@ ALLOWED_HOSTS = config(
 # over HTTPS instead, so it isn't affected by that restriction.
 RESEND_API_KEY = config("RESEND_API_KEY")
 
-DEFAULT_FROM_EMAIL = "info@lithavi.com"
+DEFAULT_FROM_EMAIL = "Lithavi International <info@lithavi.com>"
 QUOTE_NOTIFY_EMAIL = "info@lithavi.com"
 
 # ---- Old SMTP config (Porkbun) — no longer used, kept for reference ----
