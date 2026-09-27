@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'stats',
     "service_areas",
+    "django_countries",
     "client_voices",
     "services_faq",
     "projects",
