@@ -6,27 +6,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0002_project_status'),
+        ("projects", "0002_project_status"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='project',
-            options={'ordering': ['order', '-year']},
+            name="project",
+            options={"ordering": ["order", "-year"]},
         ),
+
         migrations.AddField(
-            model_name='project',
-            name='country',
-            field=models.CharField(default='Unknown', help_text='Project country', max_length=100),
+            model_name="project",
+            name="country",
+            field=models.CharField(
+                default="LK",
+                help_text="Project country",
+                max_length=100,
+            ),
         ),
+
         migrations.AddField(
-            model_name='project',
-            name='year',
-            field=models.PositiveIntegerField(default=2025, help_text='Project year'),
+            model_name="project",
+            name="year",
+            field=models.PositiveIntegerField(
+                default=2025,
+                help_text="Project year",
+            ),
         ),
+
         migrations.AlterField(
-            model_name='project',
-            name='status',
-            field=models.CharField(choices=[('completed', 'Completed'), ('ongoing', 'Ongoing'), ('case_study', 'Case Study Coming Soon')], default='case_study', max_length=20),
+            model_name="project",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("completed", "Completed"),
+                    ("ongoing", "Ongoing"),
+                    ("case_study", "Case Study Coming Soon"),
+                ],
+                default="case_study",
+                max_length=30,
+            ),
         ),
     ]

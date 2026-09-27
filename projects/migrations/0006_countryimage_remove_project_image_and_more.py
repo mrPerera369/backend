@@ -7,29 +7,58 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0005_alter_project_options'),
+        (
+            "projects",
+            "0005_alter_project_options",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CountryImage',
+            name="CountryImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('country', django_countries.fields.CountryField(max_length=2, unique=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='country-images/')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "country",
+                    django_countries.fields.CountryField(
+                        max_length=2,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="country-images/",
+                    ),
+                ),
             ],
         ),
+
         migrations.RemoveField(
-            model_name='project',
-            name='image',
+            model_name="project",
+            name="image",
         ),
+
         migrations.RemoveField(
-            model_name='project',
-            name='order',
+            model_name="project",
+            name="order",
         ),
+
         migrations.AlterField(
-            model_name='project',
-            name='description',
-            field=models.TextField(help_text='Project description'),
+            model_name="project",
+            name="description",
+            field=models.TextField(
+                help_text="Project description",
+            ),
         ),
     ]

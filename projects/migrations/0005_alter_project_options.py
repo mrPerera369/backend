@@ -6,12 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0004_alter_project_country'),
+        (
+            "projects",
+            "0004_alter_project_country",
+        ),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='project',
-            options={'ordering': ['-year']},
+            name="project",
+            options={"ordering": ["-year"]},
         ),
     ]

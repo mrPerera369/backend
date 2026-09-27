@@ -7,13 +7,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0003_alter_project_options_project_country_project_year_and_more'),
+        (
+            "projects",
+            "0003_alter_project_options_project_country_project_year_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='country',
-            field=django_countries.fields.CountryField(default='LK', help_text='Project country', max_length=2),
+            model_name="project",
+            name="country",
+            field=django_countries.fields.CountryField(
+                default="LK",
+                help_text="Project country",
+                max_length=2,
+            ),
         ),
     ]
