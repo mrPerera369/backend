@@ -53,7 +53,7 @@ class Project(models.Model):
     )
 
     status = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=Status.choices,
         default=Status.CASE_STUDY,
     )
